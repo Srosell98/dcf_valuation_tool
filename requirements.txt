@@ -1,0 +1,8 @@
+pandas>=2.0.0
+numpy>=1.24.0
+yfinance>=0.2.20
+plotly>=5.15.0
+pandas-ta>=0.3.14b
+python-dotenv>=1.0.0
+pyarrow==14.0.1
+Pillow>=9.5.0
