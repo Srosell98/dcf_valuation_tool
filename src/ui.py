@@ -249,7 +249,136 @@ def create_technical_metric_card(label, value, status, color):
     </div>
     """, unsafe_allow_html=True)
 
-# ... include other UI helpers as needed ...
+
+def create_score_gauge(title, score):
+    """Create a circular gauge for scores"""
+    color = get_gauge_color(score)
+    st.markdown(f"""
+    <div style="text-align: center; padding: 10px;">
+        <div style="
+            width: 80px; height: 80px; 
+            border-radius: 50%; 
+            background: conic-gradient({color} {score*3.6}deg, #e0e0e0 0deg);
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 10px auto;
+        ">
+            <div style="
+                width: 60px; height: 60px; 
+                border-radius: 50%; 
+                background: #232936;
+                display: flex; align-items: center; justify-content: center;
+                color: white; font-weight: bold;
+            ">
+                {int(score)}
+            </div>
+        </div>
+        <div style="color: #e0e6ed; font-size: 0.9rem;">{title}</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+def get_gauge_color(score):
+    if score >= 80:
+        return "#4CAF50"  # Green
+    elif score >= 60:
+        return "#FF9800"  # Orange
+    elif score >= 40:
+        return "#FFC107"  # Yellow
+    else:
+        return "#F44336"  # Red
+
+def get_score_color(score):
+    if score >= 8:
+        return "#4CAF50"  # Green
+    elif score >= 6:
+        return "#FF9800"  # Orange
+    elif score >= 4:
+        return "#FFC107"  # Yellow
+    else:
+        return "#F44336"  # Red
+
+def display_fundamental_analysis(ticker, metrics, piotroski_data, scorecard):
+    """
+    Display comprehensive fundamental analysis in Streamlit
+    """
+    st.markdown('<div class="container-header">Fundamental Analysis Dashboard</div>', unsafe_allow_html=True)
+    if scorecard:
+        col1, col2, col3, col4, col5 = st.columns(5)
+        with col1:
+            create_score_gauge("Overall", scorecard['overall_score'])
+        with col2:
+            create_score_gauge("Valuation", scorecard['valuation_score'])
+        with col3:
+            create_score_gauge("Quality", scorecard['quality_score'])
+        with col4:
+            create_score_gauge("Strength", scorecard['strength_score'])
+        with col5:
+            create_score_gauge("Piotroski", scorecard['piotroski_score'])
+    tab1, tab2, tab3, tab4 = st.tabs(["📊 Valuation Metrics", "⭐ Quality & Profitability", "🛡️ Balance Sheet Strength", "🎯 Piotroski F-Score"])
+    with tab1:
+        if metrics:
+            col1, col2 = st.columns(2)
+            with col1:
+                st.subheader("Relative Valuation")
+                create_metric_card("P/E Ratio", f"{metrics.get('pe_ratio', 0):.2f}")
+                create_metric_card("EV/EBITDA", f"{metrics.get('ev_ebitda', 0):.2f}")
+                create_metric_card("Price/Book", f"{metrics.get('price_to_book', 0):.2f}")
+            with col2:
+                st.subheader("Market Multiples")
+                create_metric_card("Price/Sales", f"{metrics.get('price_to_sales', 0):.2f}")
+                create_metric_card("EV/Revenue", f"{metrics.get('ev_revenue', 0):.2f}")
+                create_metric_card("FCF Yield", f"{metrics.get('fcf_yield', 0):.2%}")
+    with tab2:
+        if metrics:
+            col1, col2 = st.columns(2)
+            with col1:
+                st.subheader("Profitability")
+                create_metric_card("ROE", f"{metrics.get('roe', 0):.2%}")
+                create_metric_card("ROA", f"{metrics.get('roa', 0):.2%}")
+                create_metric_card("ROIC", f"{metrics.get('roic', 0):.2%}")
+            with col2:
+                st.subheader("Margins")
+                create_metric_card("Gross Margin", f"{metrics.get('gross_margin', 0):.2%}")
+                create_metric_card("Operating Margin", f"{metrics.get('operating_margin', 0):.2%}")
+                create_metric_card("Net Margin", f"{metrics.get('net_margin', 0):.2%}")
+    with tab3:
+        if metrics:
+            col1, col2 = st.columns(2)
+            with col1:
+                st.subheader("Liquidity")
+                create_metric_card("Current Ratio", f"{metrics.get('current_ratio', 0):.2f}")
+                create_metric_card("Quick Ratio", f"{metrics.get('quick_ratio', 0):.2f}")
+            with col2:
+                st.subheader("Leverage")
+                create_metric_card("Debt/Equity", f"{metrics.get('debt_to_equity', 0):.2f}")
+                create_metric_card("Interest Coverage", f"{metrics.get('interest_coverage', 0):.2f}")
+    with tab4:
+        if piotroski_data:
+            col1, col2 = st.columns([1, 2])
+            with col1:
+                st.subheader("Piotroski F-Score")
+                score_color = get_score_color(piotroski_data['total_score'])
+                st.markdown(f"""
+                <div style="text-align: center; padding: 20px; background-color: {score_color}; border-radius: 10px; margin: 10px 0;">
+                    <h1 style="color: white; margin: 0;">{piotroski_data['total_score']}/9</h1>
+                    <p style="color: white; margin: 0;">{piotroski_data['interpretation']}</p>
+                </div>
+                """, unsafe_allow_html=True)
+            with col2:
+                st.subheader("Score Breakdown")
+                breakdown = piotroski_data['breakdown']
+                categories = {
+                    'Profitability': ['positive_net_income', 'positive_roa', 'positive_operating_cf', 'quality_of_earnings'],
+                    'Leverage & Liquidity': ['decreased_debt', 'increased_current_ratio', 'no_new_shares'],
+                    'Operating Efficiency': ['increased_gross_margin', 'increased_asset_turnover']
+                }
+                for category, items in categories.items():
+                    st.write(f"**{category}:**")
+                    for item in items:
+                        score = breakdown.get(item, 0)
+                        icon = "✅" if score == 1 else "❌"
+                        st.write(f"{icon} {item.replace('_', ' ').title()}: {score}")
+                    st.write("")
+
 def create_loading_spinner():
     st.spinner("Loading...")  # This will show a spinner while the app is loading
     st.session_state.loading = True
