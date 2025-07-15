@@ -92,7 +92,7 @@ Go to the local URL displayed by Streamlit (usually [http://localhost:8501](http
 * **src/ui.py** — Custom CSS, metric card helpers, table formatters, etc.
 * **src/config.py** — Central constants (default rates, color schemes, etc.)
 * **src/utils.py** — Miscellaneous utility functions
-* **breadth.py** — Optional: Market breadth data provider (if used)
+* **breadth.py** — Not working: Market breadth data provider 
 
 ## Customization
 
