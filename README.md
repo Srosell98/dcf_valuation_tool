@@ -38,7 +38,7 @@ A professional, modular Streamlit web app for discounted cash flow (DCF) valuati
 1. **Clone the repository:**
 
    ```bash
-   git clone <repo-url>
+   git clone https://github.com/Srosell98/dcf_valuation_tool.git
    cd <repo-folder>
    ```
 2. **Create a Python virtual environment:**
@@ -54,8 +54,7 @@ A professional, modular Streamlit web app for discounted cash flow (DCF) valuati
    ```bash
    pip install -r requirements.txt
    ```
-4. *(Optional: If using custom `breadth.py`, ensure it is present at project root or update imports)*
-
+   
 **To deactivate the virtual environment:**
 
 ```bash
