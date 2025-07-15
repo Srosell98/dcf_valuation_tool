@@ -80,7 +80,7 @@ Go to the local URL displayed by Streamlit (usually [http://localhost:8501](http
 * numpy
 * plotly
 * pandas\_ta
-* (breadth.py if present)
+* breadth.py
 
 ## Module Structure Explained
 
