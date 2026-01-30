@@ -1,10 +1,9 @@
-pandas>=2.0.0
-numpy>=1.24.0
-yfinance>=0.2.20
+pandas>=2.2.2
+yfinance>=0.2.40
 plotly>=5.15.0
-pandas-ta>=0.3.14b
+pandas-ta==0.4.71b0
 python-dotenv>=1.0.0
-pyarrow==14.0.1
+pyarrow>=14.0.1
 Pillow>=9.5.0
-streamlit>=1.46.1,<2.0
-numpy==1.26.4
+streamlit>=1.35.0
+numpy>=1.26.0
